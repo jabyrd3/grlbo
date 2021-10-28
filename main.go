@@ -43,13 +43,13 @@ func getTweetID(line string) int64 {
 	}
 	return intID
 }
-func handleMessage(message string, tclient *twitter.Client) string {
+func handleMessage(message string, tclient *twitter.Client) interface{} {
 	if strings.Contains(message, "https://twitter.com") == true {
 		log.Printf("its a tweet, fetch it")
 		tweetID := getTweetID(message)
 		if tweetID == 0 {
 			log.Printf("tried to eat bad tweet url")
-			return ""
+			return false
 		}
 
 		params := new(twitter.StatusLookupParams)
@@ -57,7 +57,7 @@ func handleMessage(message string, tclient *twitter.Client) string {
 		tweets, _, err := tclient.Statuses.Lookup([]int64{tweetID}, params)
 		if err != nil {
 			log.Fatalln(err)
-			return ""
+			return false
 		}
 		builtResponse := fmt.Sprintf("@%s: %s", tweets[0].User.ScreenName, tweets[0].FullText)
 
@@ -71,12 +71,12 @@ func handleMessage(message string, tclient *twitter.Client) string {
 			_, _, err := tclient.Statuses.Update(message[5:], nil)
 			if err != nil {
 				log.Fatalln(err)
-				return ""
+				return false
 			}
 			return "tweeted"
 		}
 	}
-	return ""
+	return false
 }
 func main() {
 	f, err := os.Open("config.yml")
@@ -117,18 +117,18 @@ func main() {
 				// Create a handler on all messages.
 				log.Printf(m.Trailing())
 				response := handleMessage(m.Trailing(), tclient)
-				if len(response) != 0 {
+				switch response.(type) {
+				case string:
 					err := c.WriteMessage(&irc.Message{
 						Command: "PRIVMSG",
 						Params: []string{
 							m.Params[0],
-							response,
+							response.(string),
 						},
 					})
 					if err != nil {
 						log.Fatalln(err)
 					}
-
 				}
 			}
 		}),
