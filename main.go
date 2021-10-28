@@ -63,17 +63,18 @@ func handleMessage(message string, tclient *twitter.Client) string {
 
 		return builtResponse
 	}
-
-	var firstChars = message[0:5]
-	if firstChars == "twit " {
-		log.Printf("its a twurt")
-		log.Printf(message)
-		_, _, err := tclient.Statuses.Update(message[5:], nil)
-		if err != nil {
-			log.Fatalln(err)
-			return ""
+	if len(message) > 5 {
+		var firstChars = message[0:5]
+		if firstChars == "twit " {
+			log.Printf("its a twurt")
+			log.Printf(message)
+			_, _, err := tclient.Statuses.Update(message[5:], nil)
+			if err != nil {
+				log.Fatalln(err)
+				return ""
+			}
+			return "tweeted"
 		}
-		return "tweeted"
 	}
 	return ""
 }
