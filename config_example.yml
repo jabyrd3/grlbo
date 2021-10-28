@@ -1,0 +1,12 @@
+consumer:
+  consumer_key: <twitter consumer key>
+  consumer_secret: <twitter consumer secret>
+token:
+  token_key: <twitter token>
+  token_secret: <twitter token secret>
+irc:
+  chan: <irc chan with leading octothorpe>
+  nick: <irc nick>
+  user: <irc user>
+  name: <irc full name>
+  connection: <irc server hostname:port>

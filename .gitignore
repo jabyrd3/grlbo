@@ -1,0 +1,6 @@
+go.sum
+go_build*
+m
+config.yml
+.idea
+vendor/*
